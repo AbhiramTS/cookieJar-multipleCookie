@@ -163,7 +163,12 @@ export class SawtoothService {
     // Complete here
     const payload = action + ',' + values + ',' + type;
     const encodedPayload = this.encoder.encode(payload);
-    // console.log(payload, encodedPayload);    
+    console.log('before', this.address);
+    
+    this.address = this.hash(this.FAMILY_NAME).substr(0, 6) + this.hash(type).substr(0, 6) + this.hash(this.publicKey).substr(0, 58);
+    console.log('after', this.address);
+    
+    console.log(' payload :',payload, 'enc' , encodedPayload);    
     return encodedPayload;
   }
 
@@ -200,13 +205,13 @@ export class SawtoothService {
     let nonce = (Math.random() * 1000).toString();
     let tHB = {
       familyName: this.FAMILY_NAME,
-      familyVersion: this.FAMILY_VERSION,
-      inputs: this.address,
-      outputs: this.address,
-      signerPublicKey: this.publicKey,
-      batcherPublicKey: this.publicKey,
-      dependencies: [],
-      payloadSha512: this.hash(payload),
+      familyVersion: this.FAMILY_VERSION ,
+      inputs: [this.address] ,
+      outputs: [this.address] ,
+      signerPublicKey: this.publicKey ,
+      batcherPublicKey: this.publicKey ,
+      dependencies: [] ,
+      payloadSha512: this.hash(payload) ,
       nonce: nonce ,
     };
     const transactionHeaderBytes = protobuf.TransactionHeader.encode(tHB).finish();
@@ -228,7 +233,7 @@ export class SawtoothService {
     // batchHeader
     let bHB = {
       signerPublicKey: this.publicKey,
-      transactionIDs: transactionsList.map((txn) => txn.headerSignature)
+      transactionIds: transactionsList.map((txn) => txn.headerSignature)
     };
     console.log(bHB);    
     const batchHeaderBytes = protobuf.BatchHeader.encode(bHB).finish();
