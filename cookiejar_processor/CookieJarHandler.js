@@ -31,6 +31,8 @@ class CJHandler extends TransactionHandler{
         type: decodedPayload[2]
       }
 
+      console.log('payload : ', payload);      
+
       //Bake
 
       if( payload.action === 'bake'){
@@ -41,19 +43,26 @@ class CJHandler extends TransactionHandler{
                     console.log("stateMapping", stateMapping)
                     let myState = stateMapping[hashedAddress]
                     console.log("myState", myState)
-                    let pastState = 0,
-                        newState = 0
+                    let pastState = 0;
                     if(myState === ""|| myState === null){
+                      console.log("No previous cookies, creating new cookie jar ");
                       pastState = 0
                     }
                     else{
-                      pastState = parseInt(myState);
+                      pastState = decoder.decode(myState);
+                      console.log("Cookies in the jar:"+pastState)
                     }
 
-                    newState = pastState + parseInt(payload.quantity)
-                    stateStore.setState({[hashedAddress]:newState})
+                    let newStateStr = (pastState + parseInt(payload.quantity)).toString();
+                    let newState = encoder.encode(newStateStr);
+                    let entries = {
+                      [hashedAddress] : newState
+                    }
+                    console.log('entries : ', entries);                    
+                    return stateStore.setState(entries)
                               .then((returnAfterSetState) =>{
-                                console.log("returnAfterSetState", returnAfterSetState)
+                                console.log("returnAfterSetState", returnAfterSetState);
+                                return returnAfterSetState;
                               })
 
                   })
