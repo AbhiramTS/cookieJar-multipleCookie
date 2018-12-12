@@ -85,7 +85,7 @@ export class SawtoothService {
           payload: payload,
           transactionList : transactionsList,
           batchList: batchList,
-          responce: resp  };
+          response: resp  };
       })
       .catch((error) => {
         console.log('error here', error);

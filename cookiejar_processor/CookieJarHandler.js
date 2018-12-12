@@ -38,7 +38,7 @@ class CJHandler extends TransactionHandler{
       if( payload.action === 'bake'){
         let hashedAddress = namespaces +  _hash(payload.type).substring(0, 6)  + _hash(signerAddress)
         console.log("address", hashedAddress);
-        stateStore.getState([hashedAddress])
+        return stateStore.getState([hashedAddress])
                   .then((stateMapping) =>{
                     console.log("stateMapping", stateMapping)
                     let myState = stateMapping[hashedAddress]
